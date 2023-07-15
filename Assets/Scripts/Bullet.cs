@@ -11,17 +11,16 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject, 5);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnCollisionEnter2D(Collision2D other)
     {
+        
         if (other.transform.CompareTag("Enemy"))
         {
             Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
+        else if (other.transform.CompareTag("Wall"))
+        {
             Destroy(gameObject);
         }
     }
