@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
 
     private Vector2 movement;
 
+    private int hp = 3;
+    private int spd = 1;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();

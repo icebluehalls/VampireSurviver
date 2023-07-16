@@ -7,6 +7,7 @@ public class Shooting : MonoBehaviour
     public GameObject bulletPrefab;  // 총알 프리팹을 여기에 설정합니다.
     public float bulletSpeed = 20f;  // 총알의 속도
 
+    public float damage = 1;
     // Update is called once per frame
     void Update()
     {
@@ -25,8 +26,8 @@ public class Shooting : MonoBehaviour
         Vector2 direction = (mousePosition - (Vector2)transform.position).normalized;
 
         // 총알을 생성하고 발사합니다.
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+        GameObject bullet = Instantiate( bulletPrefab, transform.position, Quaternion.identity);
+        bullet.GetComponent<Bullet>().Shoot(damage,bulletSpeed,direction);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        rb.velocity = direction * bulletSpeed;
     }
 }

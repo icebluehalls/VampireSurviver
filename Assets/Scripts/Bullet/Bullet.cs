@@ -5,12 +5,17 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public float damage;
+
+    protected Rigidbody2D rigidbody2D;
+
+    public void Shoot(float damage, float bulletSpeed, Vector2 direction)
     {
+        this.damage = damage;
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.velocity = direction * bulletSpeed;
         Destroy(gameObject, 5);
     }
-
     private void OnCollisionEnter2D(Collision2D other)
     {
         
