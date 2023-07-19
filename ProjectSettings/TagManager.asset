@@ -7,6 +7,15 @@ TagManager:
   - Enemy
   - Wall
   - EnemyPath
+  - MainHall
+  - BigHall
+  - LeftClass
+  - BottomRespawn
+  - RightRespawn
+  - TopRespawn
+  - ClassMainPath
+  - ClassBigPath
+  - MainBigPath
   layers:
   - Default
   - TransparentFX
@@ -16,9 +25,9 @@ TagManager:
   - UI
   - Bullet
   - EnemyPath
-  - 
-  - 
-  - 
+  - Enemy
+  - Corrider
+  - Tile
   - 
   - 
   - 

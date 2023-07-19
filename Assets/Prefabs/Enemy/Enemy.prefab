@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 277519301079144867}
   - component: {fileID: 2345227618530949383}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Triangle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 6429320313747216224}
   - component: {fileID: 4469904037408493459}
   - component: {fileID: 5897180760820644018}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ Transform:
   m_Children:
   - {fileID: 277519301079144867}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6429320313747216224
 BoxCollider2D:
@@ -190,7 +190,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &5897180760820644018
 MonoBehaviour:
   m_ObjectHideFlags: 0
