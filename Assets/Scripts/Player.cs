@@ -13,10 +13,10 @@ public enum PlayerPosition
 public class Player : MonoBehaviour
 {
     public float speed = 5f;
+    public int hp = 3;
+    public Sword sword;
     private Rigidbody2D _rb;
     private Vector2 movement;
-    private int hp = 3;
-    private int spd = 1;
     private SpriteRenderer _spriteRenderer;
     private bool _isDamaged = false;
     public PlayerPosition playerPosition { get; private set; }
@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        sword = GetComponent<Sword>();
     }
     
     private void Update()
@@ -67,12 +68,13 @@ public class Player : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy") && !_isDamaged)
         {
             hp -= 1;
-
             if (hp <= 0)
             {
                 GameManager.Instance.GameEnd();
                 return;
             }
+            UIManager.Instance.UpdateHp(hp);
+
             // 적과 플레이어 사이의 방향을 계산합니다.
             Vector2 bounceDirection = transform.position - other.transform.position;
 

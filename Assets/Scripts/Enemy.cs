@@ -14,7 +14,6 @@ enum EnemyMoveType
 
 public class Enemy : MonoBehaviour
 {
-    public float speed = 3.0f; // 적의 이동 속도
     private PlayerPosition _playerPosition;
     
     private EnemyMoveType _enemyMoveType;
@@ -24,10 +23,16 @@ public class Enemy : MonoBehaviour
     private string _currentTileTag;
     private Rigidbody2D _rigidbody2D;
     private Vector2 originalVelocity;
-    private float hp = 3;
-    
-    public void Init(Vector2 moveDirection)
+    private float _hp = 3;
+    private float _exp = 1;
+    public float _speed = 3.0f; // 적의 이동 속도
+
+    public void Init(Vector2 moveDirection, float hp, float exp, float speed)
     {
+        _hp = hp;
+        _exp = exp;
+        //_speed = speed;
+        
         _moveDirection = moveDirection;
         _enemyMoveType = EnemyMoveType.Respawn;
         _playerPosition = GameManager.Instance.player.playerPosition;
@@ -54,7 +59,7 @@ public class Enemy : MonoBehaviour
         switch (_enemyMoveType)
         {
             case EnemyMoveType.Respawn:
-                transform.position += (Vector3)(_moveDirection * Time.deltaTime * speed);
+                transform.position += (Vector3)(_moveDirection * Time.deltaTime * _speed);
                 break;
             case EnemyMoveType.ChasingPlayer:
                 ChasingPlayer();
@@ -62,7 +67,7 @@ public class Enemy : MonoBehaviour
             case EnemyMoveType.GoBigClassPath:
             case EnemyMoveType.GoMainBigPath:
             case EnemyMoveType.GoMainClassPath:
-                Vector2 moveAmount = _moveDirection * speed * Time.deltaTime;
+                Vector2 moveAmount = _moveDirection * _speed * Time.deltaTime;
                 transform.position += (Vector3)moveAmount;
                 break;
             default:
@@ -74,7 +79,7 @@ public class Enemy : MonoBehaviour
     {
         // 플레이어의 방향으로 이동
         Vector2 direction = (GameManager.Instance.player.transform.position - transform.position).normalized;
-        transform.Translate(direction * speed * Time.deltaTime);
+        transform.Translate(direction * _speed * Time.deltaTime);
     }
     void ChangeEnemyMove()
     {
@@ -175,9 +180,9 @@ public class Enemy : MonoBehaviour
         {
             Sword sword = other.gameObject.GetComponent<Sword>();
 
-            hp -= sword.damage;
+            _hp -= GameManager.Instance.player.sword.damage;
 
-            if (hp <= 0)
+            if (_hp <= 0)
             {
                 Dead();
             }
@@ -188,7 +193,7 @@ public class Enemy : MonoBehaviour
             bounceDirection = bounceDirection.normalized;
 
             // 플레이어를 반대방향으로 튕겨냅니다.
-            _rigidbody2D.AddForce(bounceDirection * sword.nuckback, ForceMode2D.Force);
+            _rigidbody2D.AddForce(bounceDirection * GameManager.Instance.player.sword.nuckback, ForceMode2D.Force);
 
             StartCoroutine(InitVelocity());
         }
@@ -196,6 +201,7 @@ public class Enemy : MonoBehaviour
 
     private void Dead()
     {
+        GameManager.Instance.UpdateExp(_exp);
         EnemyManager.Instance.RemoveEnemy(this);
         Destroy(gameObject);
     }
@@ -211,8 +217,8 @@ public class Enemy : MonoBehaviour
         if (other.transform.CompareTag("Bullet"))
         {
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
-            hp -= bullet.damage;
-            if (hp <= 0)
+            _hp -= bullet.damage;
+            if (_hp <= 0)
             {
                 Dead();
             }
@@ -225,11 +231,15 @@ public class Enemy : MonoBehaviour
                 bounceDirection = bounceDirection.normalized;
 
                 // 플레이어를 반대방향으로 튕겨냅니다.
-                _rigidbody2D.AddForce(bounceDirection * bullet.nuckback, ForceMode2D.Force);
+                _rigidbody2D.AddForce(bounceDirection * bullet.knockback, ForceMode2D.Force);
             }
-            
-            Destroy(other.gameObject);
 
+            bullet.enemyTouchCount--;
+
+            if (bullet.enemyTouchCount <= 0)
+            {
+                Destroy(other.gameObject);
+            }
         }
     }
 }

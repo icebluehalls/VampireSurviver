@@ -10,8 +10,9 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager Instance = null;
     [SerializeField] private Tilemap[] respawnTilemap; // 몬스터를 생성할 타일맵
     [SerializeField] private GameObject enemyPrefab; // 생성할 몬스터 프리팹
-    public int spawnCount = 5; // 생성할 몬스터의 수
-
+    public float _currentHp = 1;
+    public float _currentSpeed = 3;
+    public float _currentExp = 7;
     [SerializeField] private Tilemap mainBigPath; 
     private List<Vector3Int> mainBigPathPositions = new List<Vector3Int>();
     [SerializeField] private Tilemap classMainPath;
@@ -26,7 +27,6 @@ public class EnemyManager : MonoBehaviour
     private float respawnTime = 3.0f;
     private WaitForSeconds respawnTimeCoroutine;
     private float respawnCount = 3;
-    private float currentTime = 0;
 
     void Awake()
     {
@@ -80,13 +80,17 @@ public class EnemyManager : MonoBehaviour
         StartCoroutine(SpawnEnemyCoroutine());
     }
 
-    void LevelUp()
+    public void LevelUp()
     {
         respawnCount += Random.Range(5, 10);
+        _currentHp = Random.Range(_currentHp, _currentHp + 0.5f);
+        _currentExp = Random.Range(_currentExp, _currentExp + 10);
+        _currentSpeed = Random.Range(_currentSpeed, _currentSpeed * 1.1f);
     }
 
     void Update()
     {
+        Debug.Log(enemyList.Count);
         for(int i = 0; i < enemyList.Count; i++)
         {
             enemyList[i].EnemyUpdate();
@@ -154,7 +158,6 @@ public class EnemyManager : MonoBehaviour
 
             for (int i = 0; i < respawnCount; i++)
             {
-                
                 string respawnName = respawnTilemap[randomTilemapIndex].name;
                 Vector2 vector2;
                 if (respawnName.StartsWith("Top"))
@@ -164,12 +167,10 @@ public class EnemyManager : MonoBehaviour
                 else if (respawnName.StartsWith("Bottom"))
                 {
                     vector2 = Vector2.up;
-
                 }
                 else if (respawnName.StartsWith("Right"))
                 {
                     vector2 = Vector2.left;
-
                 }
                 else
                 {
@@ -180,8 +181,14 @@ public class EnemyManager : MonoBehaviour
                 
                 var enemy = Instantiate(enemyPrefab, worldPos, Quaternion.identity);
                 Enemy enemyComponent = enemy.GetComponent<Enemy>();
+                
                 enemyList.Add(enemyComponent);
-                enemyComponent.Init(vector2);
+                
+                enemyComponent.Init(vector2, 
+                    Random.Range(_currentHp - 1, _currentHp + 1),
+                    Random.Range(_currentExp, _currentExp + 10), 
+                    Random.Range(_currentSpeed* 0.9f, _currentSpeed * 1.1f) 
+                );
             }
             
             yield return respawnTimeCoroutine; // 1초 후에 실행
