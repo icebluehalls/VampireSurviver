@@ -13,14 +13,6 @@ public class ReflectBullet : Bullet
     
     private void OnCollisionEnter2D(Collision2D other)
     {
-        
-        if (other.transform.CompareTag("Enemy"))
-        {
-            Destroy(other.gameObject);
-            Destroy(gameObject);
-        }
-
-        
         if (other.gameObject.CompareTag("Wall")) // "Wall" 태그가 있는 게임오브젝트와 충돌했는지 확인
         {
             // 충돌 접점에서의 법선 벡터 가져오기

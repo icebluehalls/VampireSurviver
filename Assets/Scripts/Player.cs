@@ -13,17 +13,18 @@ public enum PlayerPosition
 public class Player : MonoBehaviour
 {
     public float speed = 5f;
-    private Rigidbody2D rb;
-
+    private Rigidbody2D _rb;
     private Vector2 movement;
     private int hp = 3;
     private int spd = 1;
-    
+    private SpriteRenderer _spriteRenderer;
+    private bool _isDamaged = false;
     public PlayerPosition playerPosition { get; private set; }
     
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
     
     private void Update()
@@ -42,7 +43,7 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         // Rigidbody에 움직임을 적용합니다
-        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+        _rb.MovePosition(_rb.position + movement * speed * Time.fixedDeltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -51,7 +52,7 @@ public class Player : MonoBehaviour
         {
             playerPosition = PlayerPosition.MainHall;
         }
-        else if (other.transform.CompareTag("MainHall"))
+        else if (other.transform.CompareTag("BigHall"))
         {
             playerPosition = PlayerPosition.BigHall;
         }
@@ -63,8 +64,15 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Enemy") && !_isDamaged)
         {
+            hp -= 1;
+
+            if (hp <= 0)
+            {
+                GameManager.Instance.GameEnd();
+                return;
+            }
             // 적과 플레이어 사이의 방향을 계산합니다.
             Vector2 bounceDirection = transform.position - other.transform.position;
 
@@ -72,7 +80,17 @@ public class Player : MonoBehaviour
             bounceDirection = bounceDirection.normalized;
 
             // 플레이어를 반대방향으로 튕겨냅니다.
-            rb.AddForce(bounceDirection * 1000.0f, ForceMode2D.Force);
+            _rb.AddForce(bounceDirection * 1000.0f, ForceMode2D.Force);
+            StartCoroutine(GetDamaged());
         }
+    }
+
+    private IEnumerator GetDamaged()
+    {
+        _isDamaged = true;
+        _spriteRenderer.color = new Color(1,1,1,0.5f);
+        yield return new WaitForSeconds(3.0f);
+        _isDamaged = false;
+        _spriteRenderer.color = new Color(1,1,1,1);
     }
 }

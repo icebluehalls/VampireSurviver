@@ -27,7 +27,6 @@ public class Shooting : MonoBehaviour
 
         // 총알을 생성하고 발사합니다.
         GameObject bullet = Instantiate( bulletPrefab, transform.position, Quaternion.identity);
-        bullet.GetComponent<Bullet>().Shoot(damage,bulletSpeed,direction);
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        bullet.GetComponent<Bullet>().Shoot(damage, bulletSpeed, direction);
     }
 }

@@ -16,6 +16,8 @@ TagManager:
   - ClassMainPath
   - ClassBigPath
   - MainBigPath
+  - Sword
+  - Bullet
   layers:
   - Default
   - TransparentFX

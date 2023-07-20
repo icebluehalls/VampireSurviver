@@ -6,7 +6,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float damage;
-
+    public float nuckback = 1000;
     protected Rigidbody2D rigidbody2D;
 
     public void Shoot(float damage, float bulletSpeed, Vector2 direction)
@@ -18,13 +18,7 @@ public class Bullet : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        
-        if (other.transform.CompareTag("Enemy"))
-        {
-            Destroy(other.gameObject);
-            Destroy(gameObject);
-        }
-        else if (other.transform.CompareTag("Wall"))
+        if (other.transform.CompareTag("Wall"))
         {
             Destroy(gameObject);
         }

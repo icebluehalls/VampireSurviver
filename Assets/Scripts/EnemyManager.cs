@@ -21,6 +21,7 @@ public class EnemyManager : MonoBehaviour
 
 
     private List<Tuple<Tilemap, List<Vector3Int>>> respawntilemapList = new List<Tuple<Tilemap, List<Vector3Int>>>();
+    public List<Enemy> enemyList = new List<Enemy>();
 
     private float respawnTime = 3.0f;
     private WaitForSeconds respawnTimeCoroutine;
@@ -78,15 +79,23 @@ public class EnemyManager : MonoBehaviour
 
         StartCoroutine(SpawnEnemyCoroutine());
     }
-    
-    void Update()
-    {
-
-    }
 
     void LevelUp()
     {
         respawnCount += Random.Range(5, 10);
+    }
+
+    void Update()
+    {
+        for(int i = 0; i < enemyList.Count; i++)
+        {
+            enemyList[i].EnemyUpdate();
+        }
+    }
+
+    public void RemoveEnemy(Enemy enemy)
+    {
+        enemyList.Remove(enemy);
     }
 
     public Vector3 GetRandomMainBigPathPosition()
@@ -94,7 +103,6 @@ public class EnemyManager : MonoBehaviour
         // 무작위로 하나의 타일맵을 선택합니다.
         int randomTileIndex = Random.Range(0,mainBigPathPositions.Count);
         
-
         // 타일 위치 중 무작위로 하나를 선택합니다.
         Vector3Int spawnPos = mainBigPathPositions[randomTileIndex];
         // 선택한 타일의 월드 위치를 가져옵니다.
@@ -133,12 +141,10 @@ public class EnemyManager : MonoBehaviour
     {
         while (true)
         {
-
             // 무작위로 하나의 타일맵을 선택합니다.
             int randomTilemapIndex = Random.Range(0, respawntilemapList.Count);
             int randomTileIndex = Random.Range(0,respawntilemapList[randomTilemapIndex].Item2.Count);
-        
-
+            
             // 타일 위치 중 무작위로 하나를 선택합니다.
             Vector3Int spawnPos = respawntilemapList[randomTilemapIndex].Item2[randomTileIndex];
             // 선택한 타일의 월드 위치를 가져옵니다.
@@ -146,7 +152,7 @@ public class EnemyManager : MonoBehaviour
 
             // 해당 위치에 몬스터를 생성합니다.
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < respawnCount; i++)
             {
                 
                 string respawnName = respawnTilemap[randomTilemapIndex].name;
@@ -173,7 +179,9 @@ public class EnemyManager : MonoBehaviour
                 }
                 
                 var enemy = Instantiate(enemyPrefab, worldPos, Quaternion.identity);
-                enemy.GetComponent<Enemy>().Init(vector2);
+                Enemy enemyComponent = enemy.GetComponent<Enemy>();
+                enemyList.Add(enemyComponent);
+                enemyComponent.Init(vector2);
             }
             
             yield return respawnTimeCoroutine; // 1초 후에 실행
