@@ -9,31 +9,38 @@ public class Sword : MonoBehaviour
 {
     public GameObject shield;
     public float shieldDistance = 2.0f;  // How far the shield is from the player
-    public WaitForFixedUpdate waitForFixedUpdate;
-    public WaitForSeconds waitForCoolTime;
+    private WaitForFixedUpdate waitForFixedUpdate;
+    private WaitForSeconds waitForCoolTime;
+    private WaitForSeconds waitForImagedTime;
     public float damage = 1;
     public float coolTime = 2.0f;
+     private const float imagedTime = 0.1f;
     public float nuckback = 100;
     private bool isAttack;
 
     private BoxCollider2D _boxCollider2D;
     private SpriteRenderer _spriteRenderer;
     // Update is called once per frame
-    private void Start()
+    void Start()
     {
         isAttack = false;
         waitForFixedUpdate = new WaitForFixedUpdate();
-        waitForCoolTime = new WaitForSeconds(coolTime);
+        waitForImagedTime = new WaitForSeconds(imagedTime);
+        waitForCoolTime = new WaitForSeconds(coolTime - imagedTime);
         _boxCollider2D = shield.GetComponent<BoxCollider2D>();
         _boxCollider2D.enabled = false;
 
-        _spriteRenderer = shield.GetComponent<SpriteRenderer>();
-        _spriteRenderer.color = new Color(0.4f, 0.4f, 0.4f, 0.4f);
+        _spriteRenderer = shield.GetComponentInChildren<SpriteRenderer>();
+        _spriteRenderer.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
 
     }
 
     void Update()
     {
+        if (isAttack)
+        {
+            return;
+        }
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePosition - (Vector2)transform.position).normalized;
         shield.transform.position = (Vector2)transform.position + direction * shieldDistance;
@@ -49,7 +56,7 @@ public class Sword : MonoBehaviour
     public void CoolTimeDown(float coolDown)
     {
         coolTime -= coolDown;
-        waitForCoolTime = new WaitForSeconds(coolTime);
+        waitForCoolTime = new WaitForSeconds(coolTime - imagedTime);
     }
 
     public void MultipleSize(float multiple)
@@ -60,15 +67,15 @@ public class Sword : MonoBehaviour
     IEnumerator SwingAttack()
     {
         isAttack = true;
+        _spriteRenderer.color = new Color(1.0f, 1.0f, 1.0f, 0.7f);
         _boxCollider2D.enabled = true;
-        _spriteRenderer.color = new Color(0.4f, 0.4f, 0.4f, 0.5f);
         yield return waitForFixedUpdate;
-        
-        _boxCollider2D.enabled = false;
 
+        _boxCollider2D.enabled = false;
+        yield return waitForImagedTime;
+        _spriteRenderer.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
         yield return waitForCoolTime;
         isAttack = false;
-        _spriteRenderer.color = new Color(0.4f, 0.4f, 0.4f, 0.2f);
 
     }
     

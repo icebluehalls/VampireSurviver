@@ -23,16 +23,15 @@ public class Enemy : MonoBehaviour
     private string _currentTileTag;
     private Rigidbody2D _rigidbody2D;
     private Vector2 originalVelocity;
-    private float _hp = 3;
-    private float _exp = 1;
-    public float _speed = 3.0f; // 적의 이동 속도
+    private float _hp;
+    private float _exp;
+    public float _speed;
 
     public void Init(Vector2 moveDirection, float hp, float exp, float speed)
     {
         _hp = hp;
         _exp = exp;
-        //_speed = speed;
-        
+        _speed = speed;
         _moveDirection = moveDirection;
         _enemyMoveType = EnemyMoveType.Respawn;
         _playerPosition = GameManager.Instance.player.playerPosition;
@@ -157,6 +156,19 @@ public class Enemy : MonoBehaviour
 
         }
     }
+    
+    private void Dead()
+    {
+        GameManager.Instance.UpdateExp(_exp);
+        EnemyManager.Instance.RemoveEnemy(this);
+        Destroy(gameObject);
+    }
+
+    IEnumerator InitVelocity()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _rigidbody2D.velocity = originalVelocity;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -198,47 +210,23 @@ public class Enemy : MonoBehaviour
             StartCoroutine(InitVelocity());
         }
     }
-
-    private void Dead()
-    {
-        GameManager.Instance.UpdateExp(_exp);
-        EnemyManager.Instance.RemoveEnemy(this);
-        Destroy(gameObject);
-    }
-
-    IEnumerator InitVelocity()
-    {
-        yield return new WaitForSeconds(0.5f);
-        _rigidbody2D.velocity = originalVelocity;
-    }
-
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.transform.CompareTag("Bullet"))
         {
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
-            _hp -= bullet.damage;
-            if (_hp <= 0)
-            {
-                Dead();
-            }
-            else
-            {
-                // 적과 플레이어 사이의 방향을 계산합니다.
-                Vector2 bounceDirection = transform.position - other.transform.position;
-
-                // 정규화하여 방향 벡터만을 얻습니다.
-                bounceDirection = bounceDirection.normalized;
-
-                // 플레이어를 반대방향으로 튕겨냅니다.
-                _rigidbody2D.AddForce(bounceDirection * bullet.knockback, ForceMode2D.Force);
-            }
-
             bullet.enemyTouchCount--;
 
             if (bullet.enemyTouchCount <= 0)
             {
                 Destroy(other.gameObject);
+            }
+            
+            _hp -= bullet.damage;
+            
+            if (_hp <= 0)
+            {
+                Dead();
             }
         }
     }

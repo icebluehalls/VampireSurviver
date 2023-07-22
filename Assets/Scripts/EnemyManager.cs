@@ -10,9 +10,9 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager Instance = null;
     [SerializeField] private Tilemap[] respawnTilemap; // 몬스터를 생성할 타일맵
     [SerializeField] private GameObject enemyPrefab; // 생성할 몬스터 프리팹
-    public float _currentHp = 1;
-    public float _currentSpeed = 3;
-    public float _currentExp = 7;
+    private float _currentHp = 3;
+    private float _currentSpeed = 3;
+    private float _currentExp = 30;
     [SerializeField] private Tilemap mainBigPath; 
     private List<Vector3Int> mainBigPathPositions = new List<Vector3Int>();
     [SerializeField] private Tilemap classMainPath;
@@ -82,7 +82,7 @@ public class EnemyManager : MonoBehaviour
 
     public void LevelUp()
     {
-        respawnCount += Random.Range(5, 10);
+        respawnCount += Random.Range(1, 3);
         _currentHp = Random.Range(_currentHp, _currentHp + 0.5f);
         _currentExp = Random.Range(_currentExp, _currentExp + 10);
         _currentSpeed = Random.Range(_currentSpeed, _currentSpeed * 1.1f);
@@ -90,7 +90,6 @@ public class EnemyManager : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(enemyList.Count);
         for(int i = 0; i < enemyList.Count; i++)
         {
             enemyList[i].EnemyUpdate();
@@ -183,7 +182,6 @@ public class EnemyManager : MonoBehaviour
                 Enemy enemyComponent = enemy.GetComponent<Enemy>();
                 
                 enemyList.Add(enemyComponent);
-                
                 enemyComponent.Init(vector2, 
                     Random.Range(_currentHp - 1, _currentHp + 1),
                     Random.Range(_currentExp, _currentExp + 10), 

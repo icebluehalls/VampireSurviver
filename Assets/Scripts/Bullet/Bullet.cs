@@ -6,7 +6,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float damage;
-    public float knockback = 1000;
+    public float knockback;
     protected Rigidbody2D rigidbody2D;
     public float enemyTouchCount = 1;
     public void Shoot(float damage, float bulletSpeed, float knockback, float enemyTouchCount, Vector2 direction)

@@ -44,6 +44,27 @@ public class GameManager : MonoBehaviour
         _isLevelUp = false;
         _startTime = DateTime.Now;
         UIManager.Instance.Reset();
+        UIManager.Instance.UpdateSliderBar(_currentEXP, _maxEXP);
+    }
+
+    void Update()
+    {
+        if (_isLevelUp)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                ChooseLevelUp(_levelUpEvents[0]);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                ChooseLevelUp(_levelUpEvents[1]);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                ChooseLevelUp(_levelUpEvents[2]);
+            }
+        }
+
     }
 
     public void GameEnd()
@@ -53,7 +74,7 @@ public class GameManager : MonoBehaviour
 
     public void UpdateExp(float exp)
     {
-        _currentEXP = exp;
+        _currentEXP += exp;
         if (_currentEXP > _maxEXP)
         {
             _currentEXP -= _maxEXP;
@@ -166,7 +187,7 @@ public class GameManager : MonoBehaviour
         return content;
     }
     
-    public void GetThreeRandomEvents()
+    private void GetThreeRandomEvents()
     {
         Random rng = new Random();
         _levelUpEvents = Enum.GetValues(typeof(LevelUpEvent))

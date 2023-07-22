@@ -20,7 +20,7 @@ public class Shooting : MonoBehaviour
     public float fireDelay = 0.25f;  // 총알의 연사 속도
     public float fireDelayLeft = 0f; // 다음 총알 발사 시간을 관리합니다.
     public float damage = 1;
-    public float knockback = 1000;
+    public float knockback = 1;
     public int enemyTouchCount = 1;
     
     // Update is called once per frame
@@ -32,6 +32,8 @@ public class Shooting : MonoBehaviour
             fireDelayLeft = 0;
             Shoot();
         }
+        
+        
     }
     
     public void ChangeBullet(BulletType bulletType)
@@ -60,6 +62,8 @@ public class Shooting : MonoBehaviour
 
         // 총알을 생성하고 발사합니다.
         GameObject bullet = Instantiate( bulletPrefab, transform.position, Quaternion.identity);
-        bullet.GetComponent<Bullet>().Shoot(damage, bulletSpeed, knockback,enemyTouchCount, direction);
+        bullet.GetComponent<Bullet>().Shoot(damage, bulletSpeed, knockback, enemyTouchCount, direction);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        bullet.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 }
