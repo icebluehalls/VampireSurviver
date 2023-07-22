@@ -10,11 +10,14 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager Instance = null;
     [SerializeField] private Tilemap[] respawnTilemap; // 몬스터를 생성할 타일맵
     [SerializeField] private GameObject enemyPrefab; // 생성할 몬스터 프리팹
+    [SerializeField] private GameObject enemyPrefab2; // 생성할 몬스터 프리팹
+
     [SerializeField] private GameObject effectPrefab;
+    [SerializeField] private GameObject hpItemPrefab;
 
     private float _currentHp = 1;
     private float _currentSpeed = 3;
-    private float _currentExp = 30;
+    private float _currentExp = 5;
     [SerializeField] private Tilemap mainBigPath; 
     private List<Vector3Int> mainBigPathPositions = new List<Vector3Int>();
     [SerializeField] private Tilemap classMainPath;
@@ -107,6 +110,11 @@ public class EnemyManager : MonoBehaviour
     public void RemoveEnemy(Enemy enemy)
     {
         Instantiate(effectPrefab, enemy.transform.position, Quaternion.identity);
+        if (Random.Range(0, 10) <= 2)
+        {
+            Instantiate(hpItemPrefab, enemy.transform.position, Quaternion.identity);
+        }
+        GameManager.Instance.EnemyDead();
         enemyList.Remove(enemy);
         Destroy(enemy.gameObject);
     }
@@ -187,14 +195,22 @@ public class EnemyManager : MonoBehaviour
                     Debug.LogError("존재하지 않는 타일맵 이름 : " + respawnName);
                     continue;
                 }
-                
-                var enemy = Instantiate(enemyPrefab, worldPos, Quaternion.identity);
+
+                GameObject enemy;
+                if (Random.Range(0, 10) > 5)
+                {
+                   enemy = Instantiate(enemyPrefab, worldPos, Quaternion.identity);
+                }
+                else
+                {
+                    enemy = Instantiate(enemyPrefab2, worldPos, Quaternion.identity);
+                }
                 Enemy enemyComponent = enemy.GetComponent<Enemy>();
                 
                 enemyList.Add(enemyComponent);
                 enemyComponent.Init(vector2, 
                     Random.Range(_currentHp - 1, _currentHp + 1),
-                    Random.Range(_currentExp, _currentExp + 10), 
+                    Random.Range(_currentExp, _currentExp + 5), 
                     Random.Range(_currentSpeed* 0.9f, _currentSpeed * 1.1f) 
                 );
             }

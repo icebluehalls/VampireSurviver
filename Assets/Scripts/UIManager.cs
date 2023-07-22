@@ -14,7 +14,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image[] _levelUpCards;
     [SerializeField] private GameObject gameOverObject;
     [SerializeField] private TMP_Text duringTimeText;
-
+    [SerializeField] private TMP_Text levelUpText;
+    [SerializeField] private TMP_Text killEnemyText;
     [SerializeField] private Button restartButton;
     void Awake()
     {
@@ -24,6 +25,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void UpdateKillEnemy(int enemy)
+    {
+        killEnemyText.text = "Kill : " + enemy;
+    }
     public void UpdateHp(int hp)
     {
         for (int i = 0; i < hp; i++)
@@ -49,6 +54,11 @@ public class UIManager : MonoBehaviour
             difference.Seconds);
 
         duringTimeText.text = "during Time : " + timeDifferenceFormatted;
+    }
+
+    public void SetLevelUp(int level)
+    {
+        levelUpText.text = "Level " + level;
     }
 
     public void Reset()

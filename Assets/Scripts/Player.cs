@@ -32,6 +32,16 @@ public class Player : MonoBehaviour
     {
         this.speed = speed;
     }
+
+    public void HpUp()
+    {
+        if (hp >= 4)
+        {
+            return;
+        }
+        hp++;
+        UIManager.Instance.UpdateHp(hp);
+    }
     
     private void Update()
     {
@@ -59,6 +69,15 @@ public class Player : MonoBehaviour
         if(movement != Vector2.zero) 
         {
             movement.Normalize();
+        }
+
+        if (transform.position.x < -15 || transform.position.x > 43)
+        {
+            GameManager.Instance.GameEnd();
+        }
+        if (transform.position.y < -16 || transform.position.y > 10)
+        {
+            GameManager.Instance.GameEnd();
         }
     }
 

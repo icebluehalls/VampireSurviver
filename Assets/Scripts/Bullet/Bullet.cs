@@ -16,6 +16,7 @@ public class Bullet : MonoBehaviour
         this.enemyTouchCount = enemyTouchCount;
         rigidbody2D = GetComponent<Rigidbody2D>();
         rigidbody2D.velocity = direction * bulletSpeed;
+        rigidbody2D.freezeRotation = true;
         Destroy(gameObject, 5);
     }
 

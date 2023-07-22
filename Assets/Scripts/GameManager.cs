@@ -10,8 +10,6 @@ public enum LevelUpEvent
     SwordKnockbackUp,
     BulletDamageUp,
     BulletSpeedUp,
-    BulletCountup,
-    BulletKnockbackUp,
     BulletReflect,
     BulletTouchCountUp,
     PlayerSpeedUp
@@ -21,7 +19,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public Player player;
-    public int level = 1;
+    public int level = 0;
     private LevelUpEvent[] _levelUpEvents;
     // Start is called before the first frame update
     private DateTime _startTime;
@@ -29,6 +27,7 @@ public class GameManager : MonoBehaviour
     private float _maxEXP = 100;
     private bool _isLevelUp = false;
     public bool IsGameEnd;
+    private int enemyDeadCount = -1;
     void Awake()
     {
         if (Instance == null)
@@ -47,6 +46,14 @@ public class GameManager : MonoBehaviour
         _startTime = DateTime.Now;
         UIManager.Instance.Reset();
         UIManager.Instance.UpdateSliderBar(_currentEXP, _maxEXP);
+        LevelUpEvent();
+        EnemyDead();
+    }
+
+    public void EnemyDead()
+    {
+        enemyDeadCount++;
+        UIManager.Instance.UpdateKillEnemy(enemyDeadCount);
     }
 
     void Update()
@@ -65,6 +72,11 @@ public class GameManager : MonoBehaviour
             {
                 ChooseLevelUp(_levelUpEvents[2]);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            UpdateExp(10);
         }
 
     }
@@ -90,15 +102,20 @@ public class GameManager : MonoBehaviour
     private void LevelUpEvent()
     {
         level++;
+        UIManager.Instance.SetLevelUp(level);
+
         if (_isLevelUp)
         {
             int random = UnityEngine.Random.Range(0, _levelUpEvents.Length);
             ChooseLevelUp(_levelUpEvents[random]);
         }
-        
         _isLevelUp = true;
         GetThreeRandomEvents();
-        EnemyManager.Instance.LevelUp();
+        
+        if(level % 3 == 0)
+        {
+            EnemyManager.Instance.LevelUp();
+        }
         _maxEXP = _maxEXP * 1.1f;
     }
 
@@ -113,7 +130,7 @@ public class GameManager : MonoBehaviour
                 player.GetComponent<Sword>().CoolTimeDown(0.5f);
                 break;
             case global::LevelUpEvent.SwordRangeUp:
-                player.GetComponent<Sword>().MultipleSize(1.2f);
+                player.GetComponent<Sword>().MultipleSize(1.1f);
                 break;
             case global::LevelUpEvent.SwordKnockbackUp:
                 player.GetComponent<Sword>().nuckback += 100;
@@ -124,11 +141,11 @@ public class GameManager : MonoBehaviour
             case global::LevelUpEvent.BulletSpeedUp:
                 player.GetComponent<Shooting>().bulletSpeed += 2;
                 break;
-            case global::LevelUpEvent.BulletCountup:
-                break;
-            case global::LevelUpEvent.BulletKnockbackUp:
-                player.GetComponent<Shooting>().bulletSpeed += 2;
-                break;
+            // case global::LevelUpEvent.BulletCountup:
+            //     break;
+            // case global::LevelUpEvent.BulletKnockbackUp:
+            //     player.GetComponent<Shooting>().bulletSpeed += 2;
+            //     break;
             case global::LevelUpEvent.BulletReflect:
                 player.GetComponent<Shooting>().ChangeBullet(BulletType.Reflect);
                 break;
@@ -158,7 +175,7 @@ public class GameManager : MonoBehaviour
                 content = "검의 쿨타임이 감소합니다.";
                 break;
             case global::LevelUpEvent.SwordRangeUp:
-                content = "검의 범위가 증가합니다.";
+                content = "검의 범위가 10% 증가합니다.";
                 break;
             case global::LevelUpEvent.SwordKnockbackUp:
                 content = "검의 넉백 정도가 증가합니다.";
@@ -169,12 +186,12 @@ public class GameManager : MonoBehaviour
             case global::LevelUpEvent.BulletSpeedUp:
                 content = "총알 속도가 증가합니다.";
                 break;
-            case global::LevelUpEvent.BulletCountup:
-                content = "총알 장탄수가 증가합니다.";
-                break;
-            case global::LevelUpEvent.BulletKnockbackUp:
-                content = "총알 넉백 정도가 증가합니다.";
-                break;
+            // case global::LevelUpEvent.BulletCountup:
+            //     content = "총알 장탄수가 증가합니다.";
+            //     break;
+            // case global::LevelUpEvent.BulletKnockbackUp:
+            //     content = "총알 넉백 정도가 증가합니다.";
+            //     break;
             case global::LevelUpEvent.BulletReflect:
                 content = "총알이 반사됩니다";
                 break;
