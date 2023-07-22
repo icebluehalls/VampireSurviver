@@ -8,13 +8,13 @@ using UnityEngine.UI;
 public class Sword : MonoBehaviour
 {
     public GameObject shield;
-    public float shieldDistance = 2.0f;  // How far the shield is from the player
+    public float shieldDistance = 4.0f;  // How far the shield is from the player
     private WaitForFixedUpdate waitForFixedUpdate;
     private WaitForSeconds waitForCoolTime;
     private WaitForSeconds waitForImagedTime;
-    public float damage = 1;
+    public float damage = 5;
     public float coolTime = 2.0f;
-     private const float imagedTime = 0.1f;
+    private const float imagedTime = 0.1f;
     public float nuckback = 100;
     private bool isAttack;
 

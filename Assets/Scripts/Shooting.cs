@@ -19,7 +19,7 @@ public class Shooting : MonoBehaviour
     public float bulletSpeed = 20f;  // 총알의 속도
     public float fireDelay = 0.25f;  // 총알의 연사 속도
     public float fireDelayLeft = 0f; // 다음 총알 발사 시간을 관리합니다.
-    public float damage = 1;
+    public float damage = 3;
     public float knockback = 1;
     public int enemyTouchCount = 1;
     

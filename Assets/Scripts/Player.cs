@@ -12,8 +12,8 @@ public enum PlayerPosition
 
 public class Player : MonoBehaviour
 {
-    public float speed = 5f;
-    public int hp = 3;
+    public float speed { get; private set; }= 5f;
+    public int hp { get; private set; } = 3;
     public Sword sword;
     private Rigidbody2D _rb;
     private Vector2 movement;
@@ -27,12 +27,33 @@ public class Player : MonoBehaviour
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         sword = GetComponent<Sword>();
     }
+
+    public void SetSpeed(float speed)
+    {
+        this.speed = speed;
+    }
     
     private void Update()
     {
+        if (GameManager.Instance.IsGameEnd)
+        {
+            return;
+        }
         // Input을 받습니다
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
+
+        Vector3 mousePosition = Input.mousePosition;
+
+        // 화면의 중앙보다 왼쪽인지 오른쪽인지를 판단
+        if (mousePosition.x < Screen.width / 2)
+        {
+            _spriteRenderer.flipX = true;
+        }
+        else
+        {
+            _spriteRenderer.flipX = false;
+        }
         
         // Normalize the movement vector
         if(movement != Vector2.zero) 

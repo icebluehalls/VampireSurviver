@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     
     private string _currentTileTag;
     private Rigidbody2D _rigidbody2D;
+    private SpriteRenderer _spriteRenderer;
     private Vector2 originalVelocity;
     private float _hp;
     private float _exp;
@@ -37,6 +38,7 @@ public class Enemy : MonoBehaviour
         _playerPosition = GameManager.Instance.player.playerPosition;
         _rigidbody2D = GetComponent<Rigidbody2D>();
         originalVelocity = _rigidbody2D.velocity;
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -68,6 +70,14 @@ public class Enemy : MonoBehaviour
             case EnemyMoveType.GoMainClassPath:
                 Vector2 moveAmount = _moveDirection * _speed * Time.deltaTime;
                 transform.position += (Vector3)moveAmount;
+                if (_moveDirection.x > 0)
+                {
+                    _spriteRenderer.flipX = false;
+                }
+                else
+                {
+                    _spriteRenderer.flipX = true;
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -79,6 +89,14 @@ public class Enemy : MonoBehaviour
         // 플레이어의 방향으로 이동
         Vector2 direction = (GameManager.Instance.player.transform.position - transform.position).normalized;
         transform.Translate(direction * _speed * Time.deltaTime);
+        if (direction.x > 0)
+        {
+            _spriteRenderer.flipX = false;
+        }
+        else
+        {
+            _spriteRenderer.flipX = true;
+        }
     }
     void ChangeEnemyMove()
     {
@@ -161,7 +179,6 @@ public class Enemy : MonoBehaviour
     {
         GameManager.Instance.UpdateExp(_exp);
         EnemyManager.Instance.RemoveEnemy(this);
-        Destroy(gameObject);
     }
 
     IEnumerator InitVelocity()
@@ -215,7 +232,7 @@ public class Enemy : MonoBehaviour
         if (other.transform.CompareTag("Bullet"))
         {
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
-            bullet.enemyTouchCount--;
+            bullet.DownEnemyTouchCount(1);
 
             if (bullet.enemyTouchCount <= 0)
             {

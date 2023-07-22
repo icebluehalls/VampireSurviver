@@ -10,7 +10,9 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager Instance = null;
     [SerializeField] private Tilemap[] respawnTilemap; // 몬스터를 생성할 타일맵
     [SerializeField] private GameObject enemyPrefab; // 생성할 몬스터 프리팹
-    private float _currentHp = 3;
+    [SerializeField] private GameObject effectPrefab;
+
+    private float _currentHp = 1;
     private float _currentSpeed = 3;
     private float _currentExp = 30;
     [SerializeField] private Tilemap mainBigPath; 
@@ -90,6 +92,12 @@ public class EnemyManager : MonoBehaviour
 
     void Update()
     {
+        
+        if (GameManager.Instance.IsGameEnd)
+        {
+            return;
+        }
+        
         for(int i = 0; i < enemyList.Count; i++)
         {
             enemyList[i].EnemyUpdate();
@@ -98,7 +106,9 @@ public class EnemyManager : MonoBehaviour
 
     public void RemoveEnemy(Enemy enemy)
     {
+        Instantiate(effectPrefab, enemy.transform.position, Quaternion.identity);
         enemyList.Remove(enemy);
+        Destroy(enemy.gameObject);
     }
 
     public Vector3 GetRandomMainBigPathPosition()

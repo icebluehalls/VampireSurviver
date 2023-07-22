@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float damage;
-    public float knockback;
+    public float damage { get; private set; }
+    public float knockback { get; private set; }
     protected Rigidbody2D rigidbody2D;
-    public float enemyTouchCount = 1;
+    public float enemyTouchCount { get; private set; } = 1;
     public void Shoot(float damage, float bulletSpeed, float knockback, float enemyTouchCount, Vector2 direction)
     {
         this.damage = damage;
@@ -18,6 +18,12 @@ public class Bullet : MonoBehaviour
         rigidbody2D.velocity = direction * bulletSpeed;
         Destroy(gameObject, 5);
     }
+
+    public void DownEnemyTouchCount(int count)
+    {
+        enemyTouchCount -= count;
+    }
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.transform.CompareTag("Wall"))

@@ -21,13 +21,14 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public Player player;
-
+    public int level = 1;
     private LevelUpEvent[] _levelUpEvents;
     // Start is called before the first frame update
     private DateTime _startTime;
     private float _currentEXP = 0;
     private float _maxEXP = 100;
     private bool _isLevelUp = false;
+    public bool IsGameEnd;
     void Awake()
     {
         if (Instance == null)
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
     
     void Start()
     {
+        IsGameEnd = false;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         _currentEXP = 0;
         _maxEXP = 100;
@@ -70,6 +72,7 @@ public class GameManager : MonoBehaviour
     public void GameEnd()
     {
         UIManager.Instance.ShowGameOver(_startTime);
+        IsGameEnd = true;
     }
 
     public void UpdateExp(float exp)
@@ -86,10 +89,11 @@ public class GameManager : MonoBehaviour
 
     private void LevelUpEvent()
     {
+        level++;
         if (_isLevelUp)
         {
-            int random = UnityEngine.Random.Range(0,Enum.GetValues(typeof(LevelUpEvent)).Length);
-            ChooseLevelUp((LevelUpEvent)random);
+            int random = UnityEngine.Random.Range(0, _levelUpEvents.Length);
+            ChooseLevelUp(_levelUpEvents[random]);
         }
         
         _isLevelUp = true;
@@ -132,7 +136,7 @@ public class GameManager : MonoBehaviour
                 player.GetComponent<Shooting>().enemyTouchCount++;
                 break;
             case global::LevelUpEvent.PlayerSpeedUp:
-                player.speed += 1;
+                player.GetComponent<Player>().SetSpeed(player.speed + 1);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(levelUpEvent), levelUpEvent, null);
